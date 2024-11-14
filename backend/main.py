@@ -1,46 +1,100 @@
-from fastapi import FastAPI
-
-from fastapi import HTTPException, Depends, File, UploadFile
-from sqlalchemy.orm import Session
-from models import Part
-from database import SessionLocal, engine
-from excel_handler import export_to_excel, import_from_excel
+from fastapi import FastAPI, HTTPException, Depends, File, UploadFile, Response
 import shutil
+from sqlmodel import Session, select
+import json
+import pathlib
+from typing import List, Union  
+from database import engine, Parts
 
 app = FastAPI()
 
+data = []
 
-Part.metadata.create_all(bind=engine)
+# define app start-up event
+@app.on_event("startup")
+async def startup_event():
+    DATAFILE = pathlib.Path() / 'data' / 'allParts.json'
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+    session = Session(engine)
+    stmt = select(Parts)
+    result = session.exec(stmt).first()
+
+    # load data if there's no result
+    if result is None:
+        with open(DATAFILE, 'r') as f:
+            tracks = json.load(f)
+            for track in tracks:
+                session.add(Parts(**track))
+        session.commit()
+
+    session.close()
 
 
-@app.get("/parts")
-def home():
-    return {"message": "Hello world!"}
+def get_session():
+    with Session(engine) as session:
+        yield session
 
 
-@app.post("/parts")
-def add_part(name: str, time: int, db: Session = Depends(get_db)):
-    new_part = Part(name=name, changeover_time=time)
-    db.add(new_part)
-    db.commit()
-    return {"message": "Part added successfully"}
 
-@app.post("/export")
-def export_excel(db: Session = Depends(get_db)):
-    parts = db.query(Part).all()
-    export_to_excel(parts)
-    return {"message": "Exported to parts.xlsx"}
+@app.get("/parts", response_model=List[Parts])  # Changed Track to Parts here
+def parts(session: Session = Depends(get_session)): 
+    stmt = select(Parts)
+    result = session.exec(stmt).all()
+    return result
 
-@app.post("/import")
-async def import_excel(file: UploadFile, db: Session = Depends(get_db)):
-    with open("uploaded.xlsx", "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-    import_from_excel("uploaded.xlsx", db)
-    return {"message": "Import completed successfully"} 
+
+
+@app.get("/parts/{parts_id}", response_model=Union[Parts, str])
+def parts(parts_id: int , response: Response, session: Session = Depends(get_session)): 
+    part = session.get(Parts , parts_id)
+    if parts is None:
+        response.status_code = 404
+        return "Not found this Part"
+    return part
+
+
+
+# Post
+@app.post("/parts/", response_model=Parts, status_code=201)  # Changed Track to Parts here
+def create_parts(part: Parts, session: Session = Depends(get_session)): 
+    session.add(part)
+    session.commit()
+    session.refresh(part)
+    return part
+
+
+
+# Put
+@app.put("/parts/{parts_id}", response_model=Union[Parts, str])  # Changed Track to Parts here
+def update_parts(parts_id: int , updated_part: Parts , response: Response, session: Session = Depends(get_session)): 
+    part = session.get(Parts , parts_id)
+
+    if part is None:
+        response.status_code = 404
+        return "Parts not found"
+    
+    # update
+    part_dict = updated_part.dict(exclude_unset=True)
+    for key , val in part_dict.items():
+        setattr(part, key , val)
+    session.add(part)
+    session.commit()
+    session.refresh(part)
+
+    return part
+
+
+# Delete
+@app.delete("/parts/{parts_id}")  # Changed Track to Parts here
+def delete_parts(parts_id: int ,response: Response, session: Session = Depends(get_session)): 
+    
+    part = session.get(Parts , parts_id)
+
+    if part is None:
+        response.status_code = 404
+        return "Parts not found"
+    
+    session.delete(part)
+    session.commit()
+    return Response(status_code=200)
+
