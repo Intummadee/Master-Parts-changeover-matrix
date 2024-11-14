@@ -4,7 +4,7 @@ from sqlmodel import Session, select
 import json
 import pathlib
 from typing import List, Union  
-from database import engine, Parts
+from database import engine, Parts , Changeover
 
 app = FastAPI()
 
@@ -22,10 +22,25 @@ async def startup_event():
     # load data if there's no result
     if result is None:
         with open(DATAFILE, 'r') as f:
-            tracks = json.load(f)
-            for track in tracks:
-                session.add(Parts(**track))
+            allParts = json.load(f)
+            for eachPart in allParts:
+                session.add(Parts(**eachPart))
         session.commit()
+
+
+    # Load changeover data
+    DATAFILE_CHANGEOVER = pathlib.Path() / 'data' / 'changeOver.json'
+
+    # Check if Changeover table is empty, then load changeover data
+    stmt_changeover = select(Changeover)
+    result_changeover = session.exec(stmt_changeover).first()
+    if result_changeover is None:
+        with open(DATAFILE_CHANGEOVER, 'r') as f:
+            changeovers = json.load(f)
+            for changeover in changeovers:
+                session.add(Changeover(**changeover))
+        session.commit()
+
 
     session.close()
 
@@ -98,3 +113,11 @@ def delete_parts(parts_id: int ,response: Response, session: Session = Depends(g
     session.commit()
     return Response(status_code=200)
 
+
+
+
+@app.get("/changeOver", response_model=List[Changeover])  # Changed Track to Parts here
+def parts(session: Session = Depends(get_session)): 
+    stmt = select(Changeover)
+    result = session.exec(stmt).all()
+    return result

@@ -1,0 +1,17 @@
+[
+    {
+        "from_part_id": 1,
+        "to_part_id": 2,
+        "changeover_time": 5.5
+    },
+    {
+        "from_part_id": 2,
+        "to_part_id": 1,
+        "changeover_time": 3.5
+    },
+    {
+        "from_part_id": 2,
+        "to_part_id": 3,
+        "changeover_time": 10
+    }
+]

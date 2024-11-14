@@ -29,18 +29,18 @@ class Changeover(SQLModel, table=True):
 
 
 
-def create_partsData():
-    Parts_1 = Parts(name="TG1")
-    Parts_2 = Parts(name="TG2")
-    Parts_3 = Parts(name="TG3")
+# def create_partsData():
+#     Parts_1 = Parts(name="TG1")
+#     Parts_2 = Parts(name="TG2")
+#     Parts_3 = Parts(name="TG3")
 
-    session = Session(engine)
+#     session = Session(engine)
 
-    session.add(Parts_1)
-    session.add(Parts_2)
-    session.add(Parts_3)
+#     session.add(Parts_1)
+#     session.add(Parts_2)
+#     session.add(Parts_3)
 
-    session.commit()
+#     session.commit()
 
 
 def create_tables():
