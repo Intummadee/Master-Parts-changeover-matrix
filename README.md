@@ -8,3 +8,9 @@ cd backend
 env\Scripts\activate
 uvicorn main:app --reload
 ```
+
+
+```
+cd .\project-name\
+npm run serve
+```

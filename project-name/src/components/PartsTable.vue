@@ -1,50 +1,93 @@
 <template>
-    <v-data-table :headers="headers" :items="parts" class="elevation-1">
-      <template v-slot:top>
-        <v-btn @click="fetchParts">Load Parts</v-btn>
-        <v-btn @click="exportParts">Export to Excel</v-btn>
-        <v-file-input @change="importParts" label="Import Excel" accept=".xlsx"></v-file-input>
-      </template>
-    </v-data-table>
-  </template>
-  
-  <script>
-  import axios from "axios";
-  
-  
+  <v-data-table
+    :headers="headers"
+    :items="plants"
+    density="compact"
+    item-key="name"
+  ></v-data-table>
+</template>
+<script>
   export default {
-    data() {
-      return {
-        headers: [
-          { text: "Part Name", value: "name" },
-          { text: "Changeover Time (min)", value: "changeover_time" },
-        ],
-        parts: [],
-      };
-    },
-    methods: {
-      async fetchParts() {
-        const response = await axios.get("http://localhost:8000/parts");
-        this.parts = response.data;
-      },
-      async exportParts() {
-        await axios.post("http://localhost:8000/export");
-        alert("Exported to parts.xlsx");
-      },
-      async importParts(event) {
-        const file = event.target.files[0];
-        const formData = new FormData();
-        formData.append("file", file);
-        await axios.post("http://localhost:8000/import", formData);
-        this.fetchParts();
-      },
-    },
-  };
-  </script>
-  
-  <style scoped>
-  .v-data-table {
-    margin-top: 20px;
+    data: () => ({
+      headers: [
+        { title: 'Plant', align: 'start', sortable: false, key: 'name' },
+        { title: 'Light', align: 'end', key: 'light' },
+        { title: 'Height', align: 'end', key: 'height' },
+        { title: 'Pet Friendly', align: 'end', key: 'petFriendly' },
+        { title: 'Price ($)', align: 'end', key: 'price' },
+      ],
+      plants: [
+        {
+          name: 'Fern',
+          light: 'Low',
+          height: '20cm',
+          petFriendly: 'Yes',
+          price: 20,
+        },
+        {
+          name: 'Snake Plant',
+          light: 'Low',
+          height: '50cm',
+          petFriendly: 'No',
+          price: 35,
+        },
+        {
+          name: 'Monstera',
+          light: 'Medium',
+          height: '60cm',
+          petFriendly: 'No',
+          price: 50,
+        },
+        {
+          name: 'Pothos',
+          light: 'Low to medium',
+          height: '40cm',
+          petFriendly: 'Yes',
+          price: 25,
+        },
+        {
+          name: 'ZZ Plant',
+          light: 'Low to medium',
+          height: '90cm',
+          petFriendly: 'Yes',
+          price: 30,
+        },
+        {
+          name: 'Spider Plant',
+          light: 'Bright, indirect',
+          height: '30cm',
+          petFriendly: 'Yes',
+          price: 15,
+        },
+        {
+          name: 'Air Plant',
+          light: 'Bright, indirect',
+          height: '15cm',
+          petFriendly: 'Yes',
+          price: 10,
+        },
+        {
+          name: 'Peperomia',
+          light: 'Bright, indirect',
+          height: '25cm',
+          petFriendly: 'Yes',
+          price: 20,
+        },
+        {
+          name: 'Aloe Vera',
+          light: 'Bright, direct',
+          height: '30cm',
+          petFriendly: 'Yes',
+          price: 15,
+        },
+        {
+          name: 'Jade Plant',
+          light: 'Bright, direct',
+          height: '40cm',
+          petFriendly: 'Yes',
+          price: 25,
+        },
+      ],
+    }),
   }
-  </style>
-  
+</script>

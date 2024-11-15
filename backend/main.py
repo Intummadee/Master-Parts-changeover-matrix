@@ -8,6 +8,16 @@ from database import engine, Parts , Changeover
 
 app = FastAPI()
 
+from fastapi.middleware.cors import CORSMiddleware
+# Allow CORS for your frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8080"],  # Frontend origin
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 data = []
 
 # define app start-up event
@@ -121,3 +131,32 @@ def parts(session: Session = Depends(get_session)):
     stmt = select(Changeover)
     result = session.exec(stmt).all()
     return result
+
+
+
+# Delete
+@app.delete("/changeOver/{from_part_id}/{to_part_id}")
+def delete_changeover(from_part_id: int, to_part_id: int, response: Response, session: Session = Depends(get_session)):
+    # Query for the Changeover entry with the specified from_part_id and to_part_id
+    stmt = select(Changeover).where(Changeover.from_part_id == from_part_id, Changeover.to_part_id == to_part_id)
+    changeover = session.exec(stmt).first()
+    
+    # If no matching Changeover is found, return 404
+    if not changeover:
+        response.status_code = 404
+        return "Changeover entry not found"
+    
+    # Delete the Changeover entry and commit the change
+    session.delete(changeover)
+    session.commit()
+    return Response(status_code=200)
+
+
+
+# Post
+@app.post("/changeOver/", response_model=Changeover, status_code=201)  # Changed Track to Parts here
+def create_parts(Changeover: Changeover, session: Session = Depends(get_session)): 
+    session.add(Changeover)
+    session.commit()
+    session.refresh(Changeover)
+    return Changeover
