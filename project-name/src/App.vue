@@ -1,6 +1,9 @@
 <template>
   <v-app>
-    <v-container>
+
+    
+
+    <v-container style="margin-top:2rem">
       <v-data-table 
         :headers="headers"
         :items="tableData"
@@ -22,18 +25,73 @@
         </template>
       </v-data-table>
     </v-container>
+
+    
+    <v-container>
+      <h3>Add parts</h3>
+      <v-sheet class="mx-auto" width="300">
+        <v-form @submit.prevent>
+          <v-text-field
+            v-model="namePart"
+            :rules="rules"
+            label="Name Part"
+          ></v-text-field>
+          <v-btn class="mt-2" type="submit" block @click="submit" >Submit</v-btn>
+          
+        </v-form>
+      </v-sheet>
+    </v-container>
+
+    
+
+    <v-container style="margin-top:3rem">
+      <h3 style="margin-bottom:2rem">All parts</h3>
+    <v-row>
+      <v-col
+        v-for="(part, index) in parts"
+        :key="index"
+        cols="12"
+        md="4"
+      >        
+          <v-card
+            :color="isHovering ? 'primary' : 'white'"
+            class="pa-3"
+          >
+            <span>{{ part.part_name }}</span>
+          </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+
+
+
+
+
   </v-app>
 </template>
 
 <script>
 import axios from "axios";
 
+
 export default {
   data() {
     return {
       headers: [],
       parts: [],
-      tableData: []
+      tableData: [],
+      namePart: '',
+      rules: [
+        value => {
+          if (value) return true
+
+          return 'You must enter a first name.'
+        },
+        value => {
+          if (value?.length <= 10) return true
+          return 'Name must be less than 10 characters.'
+        },
+      ],
     };
   },
   methods: {
@@ -80,7 +138,38 @@ export default {
       } catch (error) {
         console.error("Error fetching parts or changeover data:", error);
       }
+    },
+
+
+
+    async submit() {
+  try {
+    const response = await fetch("http://localhost:8000/parts/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ part_name: this.namePart }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Error:", errorData);
+      throw new Error(errorData.detail || "Failed to add part");
     }
+
+    const data = await response.json();
+    console.log("Part added successfully:", data);
+    this.parts.push(data)
+    this.namePart = ""; // Reset input field
+
+  } catch (error) {
+    console.error("Failed to add part", error);
+    alert(error.message);
+  }
+}
+
+
   },
   mounted() {
     this.fetchParts();

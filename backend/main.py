@@ -12,10 +12,11 @@ from fastapi.middleware.cors import CORSMiddleware
 # Allow CORS for your frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],  # Frontend origin
+    # allow_origins=["http://localhost:8080"],  # frontend origin
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allow all HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all headers
 )
 
 data = []
@@ -78,16 +79,27 @@ def parts(parts_id: int , response: Response, session: Session = Depends(get_ses
     return part
 
 
-
 # Post
-@app.post("/parts/", response_model=Parts, status_code=201)  # Changed Track to Parts here
-def create_parts(part: Parts, session: Session = Depends(get_session)): 
-    session.add(part)
+@app.post("/parts/", response_model=Parts, status_code=201) 
+def create_parts(part: Parts, session: Session = Depends(get_session)):
+    # ตรวจสอบว่า part_name ไม่เป็นค่าว่าง
+    if not part.part_name or part.part_name.strip() == "":
+        raise HTTPException(status_code=400, detail="Part name is required")
+
+    # ตรวจสอบว่า part_name ไม่ซ้ำ
+    existing_part = session.query(Parts).filter(Parts.part_name == part.part_name).first()
+    if existing_part:
+        raise HTTPException(status_code=400, detail="Part name already exists")
+
+    # สร้างข้อมูล part ใหม่
+    new_part = Parts(part_name=part.part_name)
+
+    # เพิ่มข้อมูลลงในฐานข้อมูล
+    session.add(new_part)
     session.commit()
-    session.refresh(part)
-    return part
+    session.refresh(new_part)
 
-
+    return new_part
 
 # Put
 @app.put("/parts/{parts_id}", response_model=Union[Parts, str])  # Changed Track to Parts here
