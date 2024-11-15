@@ -1,19 +1,7 @@
 # Master Parts changeover matrix
  
+<img width="100%" height="60%" src="https://github.com/Intummadee/CardCheck/blob/main/assets/edit_version2.3.png?raw=true">
 
-
-```
-pip install -r requirements.txt
-cd backend
-env\Scripts\activate
-uvicorn main:app --reload
-```
-
-
-```
-cd .\project-name\
-npm run serve
-```
 
 ```
 project/
@@ -59,4 +47,15 @@ Backend: http://localhost:8000/docs
 
 - Stop the services:
 ```docker-compose down```
+
+
+
+
+
+
+
+
+
+
+
 
