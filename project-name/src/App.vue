@@ -31,6 +31,9 @@
 
     <!-- Excel Download -->
     <DownloadTable :tableData="tableData" />
+
+    <!-- Upload -->
+    <UploadTable />
     
     <v-container>
       <h3>Add parts</h3>
@@ -78,11 +81,13 @@
 <script>
 import axios from "axios";
 import DownloadTable from './components/DownloadTable.vue';
+import UploadTable from './components/UploadTable.vue';
 
 
 export default {
   components: {
-    DownloadTable
+    DownloadTable,
+    UploadTable
   },
   data() {
     return {
@@ -91,11 +96,6 @@ export default {
       tableData: [],
       namePart: '',
       rules: [
-        value => {
-          if (value) return true
-
-          return 'You must enter a first name.'
-        },
         value => {
           if (value?.length <= 10) return true
           return 'Name must be less than 10 characters.'
@@ -157,31 +157,32 @@ export default {
 
 
     async submit() {
-  try {
-    const response = await fetch("http://localhost:8000/parts/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ part_name: this.namePart }),
-    });
+    try {
+      const response = await fetch("http://localhost:8000/parts/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ part_name: this.namePart }),
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Error:", errorData);
-      throw new Error(errorData.detail || "Failed to add part");
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("Error:", errorData);
+        throw new Error(errorData.detail || "Failed to add part");
+      }
+
+      const data = await response.json();
+      console.log("Part added successfully:", data);
+      this.parts.push(data)
+      this.namePart = ""; // Reset input field
+      location.reload();
+
+    } catch (error) {
+      console.error("Failed to add part", error);
+      alert(error.message);
     }
-
-    const data = await response.json();
-    console.log("Part added successfully:", data);
-    this.parts.push(data)
-    this.namePart = ""; // Reset input field
-
-  } catch (error) {
-    console.error("Failed to add part", error);
-    alert(error.message);
   }
-}
 
 
   },
