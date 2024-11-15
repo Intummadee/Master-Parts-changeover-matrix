@@ -255,23 +255,6 @@ def get_table(session: Session = Depends(get_session)):
 
 
 
-# # Upload Excel from front and update dB
-# @app.post("/upload-excel")
-# async def upload_excel(file: UploadFile = File(...), session: Session = Depends(get_session)):
-#     try:
-#         # Read the Excel file
-#         contents = await file.read()
-#         excel_data = pd.read_excel(BytesIO(contents), engine='openpyxl')
-        
-#         # Replace NaN with None to make the data JSON compliant
-#         excel_data = excel_data.where(pd.notnull(excel_data), "Null")
-        
-#         print("excel_data ", excel_data)
-
-#         # Convert the data to a list of dictionaries
-#         data = excel_data.to_dict(orient="records")
-
-
 #         #! excel_data
 #         # excel_data    Part Name   TG1     TG2     TG3
 #         # 0             TG1         Null    5.5     2.0
@@ -285,69 +268,6 @@ def get_table(session: Session = Depends(get_session)):
 #         # {'Part Name': 'TG2', 'TG1': 3.5, 'TG2': 'Null', 'TG3': 8.0}, 
 #         # {'Part Name': 'TG3', 'TG1': 22.0, 'TG2': 12.0, 'TG3': 'Null'}, 
 #         # {'Part Name': 'ss', 'TG1': 1.0, 'TG2': 2.0, 'TG3': 3.0}] # เพิ่มบรรทัดนี้ลง Excel
-
-
-#         # Create New part if not in Db
-#         for each_data in data:
-#             part = session.query(Parts).filter(Parts.part_name == each_data['Part Name']).first()
-#             if not part:
-#                 print("part ที่ไม่มี !!☀️☀️" , each_data['Part Name'])
-#                 # ถ้าไม่มี 'ss' ในฐานข้อมูล ก็เพิ่มเข้าไป
-#                 part = Parts(part_name=each_data['Part Name'])
-#                 session.add(part)
-#                 session.commit()
-#                 session.refresh(part)
-
-
-#         # # Step 2: หาค่า ID ของ 'ss'
-#         from_part_id = part.id
-        
-        
-#         # Step 3: สร้าง Changeover สำหรับข้อมูลที่ให้มา
-#         for record in data:
-#             part_name = record['Part Name']
-#             to_parts = {key: value for key, value in record.items() if key != 'Part Name'}
-            
-#             for to_part_name, changeover_time in to_parts.items():
-#                 # แปลงค่า 'Null' เป็น None หรือ NaN
-#                 if changeover_time == 'Null' or changeover_time is None:
-#                     changeover_time = 0.0  # หรือสามารถใช้ math.nan สำหรับค่า NaN
-
-#                 # หาค่า ID ของ to_part_name จากฐานข้อมูล
-#                 to_part = session.query(Parts).filter(Parts.part_name == to_part_name).first()
-                
-#                 if not to_part:
-#                     # ถ้าไม่พบ Part นี้ในฐานข้อมูล ก็ให้เพิ่มเข้าไป
-#                     to_part = Parts(part_name=to_part_name)
-#                     session.add(to_part)
-#                     session.commit()
-#                     session.refresh(to_part)
-                
-#                 # เช็คว่า Changeover สำหรับ (from_part_id, to_part_id) มีอยู่ในฐานข้อมูลหรือไม่
-#                 changeover = session.query(Changeover).filter(
-#                     Changeover.from_part_id == from_part_id,
-#                     Changeover.to_part_id == to_part.id
-#                 ).first()
-                
-#                 # ถ้าไม่มี Changeover นี้ในฐานข้อมูล, ให้เพิ่มเข้าไป
-#                 if not changeover:
-#                     session.add(Changeover(from_part_id=from_part_id, to_part_id=to_part.id, changeover_time=changeover_time))
-#                     session.commit()
-#                 else:
-#                     # ถ้ามี, เช็คค่าของ changeover_time ว่าตรงกันหรือไม่
-#                     if changeover.changeover_time != changeover_time:
-#                         # ถ้าไม่ตรงกัน, อัพเดตค่า
-#                         changeover.changeover_time = changeover_time
-#                         session.commit()
-
-#         return {"status": "success", "message": "Data processed and added/updated in the database"}
-    
-#     except Exception as e:
-#         print("Error:", str(e))
-#         return JSONResponse(content={"status": "error", "message": str(e)}, status_code=500)
-
-
-
 
 # Upload Excel from front and update dB
 @app.post("/upload-excel")
