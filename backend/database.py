@@ -5,9 +5,15 @@ from typing import Optional
 
 from sqlmodel import Field, SQLModel, create_engine, ForeignKey , Session
 
+
+
+
 # There should be one engine for the entire application
 DB_FILE = 'db.sqlite3'
 engine = create_engine(f"sqlite:///{DB_FILE}", echo=True)
+
+
+
 
 
 

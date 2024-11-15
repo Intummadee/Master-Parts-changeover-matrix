@@ -24,8 +24,13 @@
           </tr>
         </template>
       </v-data-table>
-    </v-container>
 
+    </v-container>
+    
+    
+
+    <!-- Excel Download -->
+    <DownloadTable :tableData="tableData" />
     
     <v-container>
       <h3>Add parts</h3>
@@ -42,6 +47,7 @@
       </v-sheet>
     </v-container>
 
+   
     
 
     <v-container style="margin-top:3rem">
@@ -54,7 +60,6 @@
         md="4"
       >        
           <v-card
-            :color="isHovering ? 'primary' : 'white'"
             class="pa-3"
           >
             <span>{{ part.part_name }}</span>
@@ -72,9 +77,13 @@
 
 <script>
 import axios from "axios";
+import DownloadTable from './components/DownloadTable.vue';
 
 
 export default {
+  components: {
+    DownloadTable
+  },
   data() {
     return {
       headers: [],
@@ -125,7 +134,9 @@ export default {
             }
           });
 
-          console.log(changeOverData);
+          console.log("header", this.headers);
+          
+          console.log("changeOverData",changeOverData);
           
 
           return {
@@ -134,6 +145,9 @@ export default {
             changeoverTimes
           };
         });
+
+        console.log(this.tableData);
+        
 
       } catch (error) {
         console.error("Error fetching parts or changeover data:", error);

@@ -4,7 +4,18 @@ from sqlmodel import Session, select
 import json
 import pathlib
 from typing import List, Union  
-from database import engine, Parts , Changeover
+from database import engine, Parts , Changeover 
+from fastapi.responses import FileResponse
+from io import BytesIO
+import pandas as pd
+from fastapi.responses import StreamingResponse
+
+
+
+# Excel
+import pandas as pd
+from io import BytesIO
+
 
 app = FastAPI()
 
@@ -149,16 +160,13 @@ def parts(session: Session = Depends(get_session)):
 # Delete
 @app.delete("/changeOver/{from_part_id}/{to_part_id}")
 def delete_changeover(from_part_id: int, to_part_id: int, response: Response, session: Session = Depends(get_session)):
-    # Query for the Changeover entry with the specified from_part_id and to_part_id
     stmt = select(Changeover).where(Changeover.from_part_id == from_part_id, Changeover.to_part_id == to_part_id)
     changeover = session.exec(stmt).first()
     
-    # If no matching Changeover is found, return 404
     if not changeover:
         response.status_code = 404
         return "Changeover entry not found"
     
-    # Delete the Changeover entry and commit the change
     session.delete(changeover)
     session.commit()
     return Response(status_code=200)
@@ -172,3 +180,76 @@ def create_parts(Changeover: Changeover, session: Session = Depends(get_session)
     session.commit()
     session.refresh(Changeover)
     return Changeover
+
+
+
+
+
+
+
+
+@app.post("/export-to-excel")
+async def export_to_excel(data: list):
+    df = pd.DataFrame(data)
+
+    excel_file = BytesIO()
+    df.to_excel(excel_file, index=False)
+    excel_file.seek(0)
+
+    return Response(
+        content=excel_file.getvalue(),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-Disposition": "attachment; filename=parts_changeover.xlsx"
+        }
+    )
+
+@app.get("/table", response_model=List)
+def get_table(session: Session = Depends(get_session)):
+    parts = session.query(Parts).all()
+    changeovers = session.query(Changeover).all()
+
+    table_data = []
+
+    for part in parts:
+        changeover_times = {}
+
+        for changeover in changeovers:
+            if changeover.from_part_id == part.id:
+                to_part = next((p for p in parts if p.id == changeover.to_part_id), None)
+                if to_part:
+                    changeover_times[to_part.part_name] = changeover.changeover_time
+
+        table_data.append({
+            "id": part.id,
+            "part_name": part.part_name,
+            "changeoverTimes": changeover_times
+        })
+
+    df = pd.DataFrame([
+        {
+            "Part Name": part["part_name"],
+            **part["changeoverTimes"]
+        }
+        for part in table_data
+    ])
+
+    tg_columns = sorted([col for col in df.columns if col.startswith("TG")], key=lambda x: int(x[2:]))
+
+    ordered_columns = ["Part Name"] + tg_columns
+
+    df = df.loc[:, ordered_columns]
+
+    print(df)
+
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False, sheet_name='Parts Table')
+
+    output.seek(0)
+
+    return StreamingResponse(
+        output,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": "attachment; filename=parts_table.xlsx"}
+    )
