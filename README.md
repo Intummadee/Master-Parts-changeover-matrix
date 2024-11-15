@@ -53,3 +53,10 @@ project/
 2. Build and start the containers:
 
    ```docker-compose up --build```
+
+Frontend: http://localhost:8080
+Backend: http://localhost:8000/docs
+
+- Stop the services:
+```docker-compose down```
+
