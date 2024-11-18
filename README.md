@@ -55,8 +55,8 @@ cd Master-Parts-changeover-matrix
 
 4. ทดสอบการเข้าถึง 
 เปิดเบราว์เซอร์และเข้าผ่าน URL ดังนี้:
-Frontend: ```http://your-server-ip/``` <br>
-Backend: ```http://your-server-ip:8000/```
+- Frontend: ```http://your-server-ip/``` 
+- Backend: ```http://your-server-ip:8000/```
 
 ตรวจสอบ server-ip 
 - คำสั่ง ```curl ifconfig.me```
