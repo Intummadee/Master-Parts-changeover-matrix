@@ -10,11 +10,13 @@ services:
     environment:
       - DATABASE_URL=sqlite:///data/db.sqlite3 
       # เนื่องจากการ mount ได้ทำให้ path ที่อยู่ใน container เป็น /app/data/db.sqlite3, ดังนั้นการตั้งค่า DATABASE_URL จึงต้องใช้ path นี้
+    restart: always
     command: ["sh", "-c", "python -m app.migrations && uvicorn app.main:app --host 0.0.0.0 --port 8000"]  # รัน migration ก่อนเริ่ม server
 
   frontend:
     build: ./frontend
     ports:
       - "80:80"  # เปิดพอร์ต 80 สำหรับ frontend
+    restart: always
     depends_on:
       - backend  # รอให้ backend พร้อมก่อนเริ่ม frontend
