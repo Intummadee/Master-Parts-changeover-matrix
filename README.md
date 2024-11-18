@@ -90,7 +90,6 @@ docker-compose up -d --build
 ```docker-compose down -v```</li>
    <li>ดูสถานะของ container ที่รันอยู่ทั้งหมดในเครื่อง:
 ```docker ps```</li>
-   <li></li>
 </ul>
 </details>
 
