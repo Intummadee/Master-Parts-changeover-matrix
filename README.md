@@ -2,6 +2,8 @@
  
 <img width="100%" height="60%" src="https://github.com/Intummadee/Master-Parts-changeover-matrix/blob/main/assets/image_web.png">
 
+---
+
 Figma Link
 : https://www.figma.com/design/Vusfg2R4YJApNm5rVVGK8o/Untitled?node-id=0-1&t=G8Zprf9IyEEWs42b-1
 
@@ -53,7 +55,7 @@ cd Master-Parts-changeover-matrix
 
 4. ทดสอบการเข้าถึง 
 เปิดเบราว์เซอร์และเข้าผ่าน URL ดังนี้:
-Frontend: ```http://your-server-ip/```
+Frontend: ```http://your-server-ip/``` <br>
 Backend: ```http://your-server-ip:8000/```
 
 ตรวจสอบ server-ip 
@@ -63,7 +65,7 @@ Backend: ```http://your-server-ip:8000/```
 
 
 
-
+---
 
 > [!IMPORTANT]
 > ## สำหรับการ อัพเดตโปรเจกต์
@@ -90,7 +92,7 @@ docker-compose up -d --build
 ```docker ps```</li>
    <li></li>
 </ul>
-
+</details>
 
 
 
