@@ -3,28 +3,18 @@ services:
   backend:
     build: ./backend
     ports:
-      - "8000:8000"
+      - "8000:8000"  # เปิดพอร์ต 8000 สำหรับ backend
+    volumes:
+      - ./backend/data/db.sqlite3:/app/data/db.sqlite3  # เชื่อมไฟล์ฐานข้อมูล SQLite บนโฮสต์กับ container
+      # ทำการ mount ไฟล์ db.sqlite3 จากโฟลเดอร์ data/ ของเครื่อง host ไปยัง /app/data/db.sqlite3 ภายใน container
     environment:
-      - DATABASE_URL=postgresql://user:password@db:5432/parts_db
-    depends_on:
-      - db
-    command: ["sh", "-c", "python -m app.migrations && uvicorn app.main:app --host 0.0.0.0 --port 8000"]
+      - DATABASE_URL=sqlite:///data/db.sqlite3 
+      # เนื่องจากการ mount ได้ทำให้ path ที่อยู่ใน container เป็น /app/data/db.sqlite3, ดังนั้นการตั้งค่า DATABASE_URL จึงต้องใช้ path นี้
+    command: ["sh", "-c", "python -m app.migrations && uvicorn app.main:app --host 0.0.0.0 --port 8000"]  # รัน migration ก่อนเริ่ม server
 
   frontend:
     build: ./frontend
     ports:
-      - "8080:8080"
+      - "80:80"  # เปิดพอร์ต 80 สำหรับ frontend
     depends_on:
-      - backend
-
-  db:
-    image: postgres:15
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: parts_db
-    volumes:
-      - db_data:/var/lib/postgresql/data
-
-volumes:
-  db_data:
+      - backend  # รอให้ backend พร้อมก่อนเริ่ม frontend
