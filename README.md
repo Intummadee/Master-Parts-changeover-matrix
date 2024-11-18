@@ -85,11 +85,14 @@ docker-compose up -d --build
 <summary><h2>คำสั่งอื่นๆ เพิ่มเติม</h2></summary>
 <ul>
    <li>คำสั่งหยุด container ทั้งหมด
-```docker-compose down```</li>
+   ```docker-compose down```
+   </li>
    <li>ลบ container และ volume ทั้งหมด 
-```docker-compose down -v```</li>
+   ```docker-compose down -v```
+   </li>
    <li>ดูสถานะของ container ที่รันอยู่ทั้งหมดในเครื่อง:
-```docker ps```</li>
+   ```docker ps```
+   </li>
 </ul>
 </details>
 
