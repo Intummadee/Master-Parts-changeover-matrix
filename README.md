@@ -4,7 +4,7 @@
 
 ---
 
-Figma Link
+## Figma Link
 : https://www.figma.com/design/Vusfg2R4YJApNm5rVVGK8o/Untitled?node-id=0-1&t=G8Zprf9IyEEWs42b-1
 
 
@@ -29,7 +29,7 @@ project/
 └── README.md                
 ```
 
-
+---
 
 > [!IMPORTANT]
 > ## สำหรับการ Deploy
@@ -78,7 +78,7 @@ docker-compose up -d --build
 2. รีสตาร์ท container ทั้งหมด ด้วยคำสั่ง
 ```docker-compose restart```
 
-
+---
 
 
 <details>
