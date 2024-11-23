@@ -186,7 +186,7 @@ def create_parts(Changeover: Changeover, session: Session = Depends(get_session)
 
 
 
-
+# ปุ่ม upload แล้วแก้ฐานข้อมูลให้ตรงกัน
 @app.post("/export-to-excel")
 async def export_to_excel(data: list):
     df = pd.DataFrame(data)
@@ -203,6 +203,9 @@ async def export_to_excel(data: list):
         }
     )
 
+
+
+# ปุ่มสร้าง excel จากฐานข้อมูล 
 @app.get("/table", response_model=List)
 def get_table(session: Session = Depends(get_session)):
     parts = session.query(Parts).all()
@@ -211,11 +214,11 @@ def get_table(session: Session = Depends(get_session)):
     table_data = []
 
     for part in parts:
-        changeover_times = {}
+        changeover_times = {} # จะมีการสร้าง dictionary สำหรับ changeover_times
 
         for changeover in changeovers:
             if changeover.from_part_id == part.id:
-                to_part = next((p for p in parts if p.id == changeover.to_part_id), None)
+                to_part = next((p for p in parts if p.id == changeover.to_part_id), None) # ใช้ next() เพื่อหาชื่อ part_name จาก parts ที่มี id ตรงกับ to_part_id
                 if to_part:
                     changeover_times[to_part.part_name] = changeover.changeover_time
 
@@ -225,22 +228,25 @@ def get_table(session: Session = Depends(get_session)):
             "changeoverTimes": changeover_times
         })
 
+    
     df = pd.DataFrame([
         {
             "Part Name": part["part_name"],
             **part["changeoverTimes"]
+            # ใช้สำหรับการ unpacking หรือ ขยาย dictionary ที่อยู่ใน part["changeoverTimes"] ให้ออกมาเป็นคู่ของ key และ value ซึ่งจะนำไปใช้ใน dictionary ใหม่ที่กำลังสร้าง
         }
         for part in table_data
     ])
 
+    # คอลัมม
+    # ในขั้นตอนนี้ คอลัมน์ที่ชื่อขึ้นต้นด้วย TG จะถูกจัดเรียงตามลำดับตัวเลขที่ตามหลัง TG (เช่น TG1, TG2, TG3 ฯลฯ) โดยใช้ฟังก์ชัน sorted() พร้อม key=lambda x: int(x[2:]) เพื่อแยกเอาหมายเลขที่ตามหลัง TG และทำการจัดเรียงตามลำดับ
     tg_columns = sorted([col for col in df.columns if col.startswith("TG")], key=lambda x: int(x[2:]))
-
     ordered_columns = ["Part Name"] + tg_columns
-
-    df = df.loc[:, ordered_columns]
+    df = df.loc[:, ordered_columns] # ให้ "Part Name" อยู่เป็นคอลัมน์แรก ตามด้วยคอลัมน์ที่ชื่อว่า "TG..."
 
     print(df)
 
+    # ใช้ Pandas ExcelWriter และ openpyxl engine เพื่อสร้างไฟล์ Excel จาก DataFrame
     output = BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         df.to_excel(writer, index=False, sheet_name='Parts Table')
@@ -251,6 +257,7 @@ def get_table(session: Session = Depends(get_session)):
         output,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         headers={"Content-Disposition": "attachment; filename=parts_table.xlsx"}
+        # Content-Disposition เป็น header ที่ระบุว่าไฟล์ที่ส่งกลับควรถูกดาวน์โหลดเป็นไฟล์ชื่อ parts_table.xlsx
     )
 
 
