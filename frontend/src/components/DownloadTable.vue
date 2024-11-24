@@ -43,7 +43,20 @@
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'parts_table.xlsx');
+    
+    // let date = new Date(year,month,day)
+    const date1 = new Date();
+    const day = date1.getDate().toString().padStart(2, '0'); // เติมเลข 0 ข้างหน้า (ถ้าวันน้อยกว่า 10)
+    const month = (date1.getMonth() + 1).toString().padStart(2, '0'); // เติมเลข 0 และเดือนเริ่มจาก 0
+    const year = date1.getFullYear().toString();
+
+    // รวมค่าที่ต้องการในรูปแบบ 'DD-MM-YYYY'
+    const excelName = `${day}-${month}-${year}`;
+
+    let name_excel = excelName + ".xlsx"
+    link.setAttribute('download', name_excel);
+    
+
     document.body.appendChild(link);
     link.click();
     link.remove();

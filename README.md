@@ -1,5 +1,8 @@
 # Master Parts changeover matrix
- 
+
+- vuetify
+
+
 <img width="100%" height="60%" src="https://github.com/Intummadee/Master-Parts-changeover-matrix/blob/main/assets/image_web.png">
 
 ---
@@ -109,3 +112,23 @@ docker-compose up -d --build
 > 4. ทดสอบการเข้าถึง ที่ IP ของเซิร์ฟเวอร์
 > 5. อัพเดตโปรเจกต์ ด้วย git pull และรันใหม่
 
+
+
+
+<!-- download ออกมาชื่อไฟล์ วันที่เวลา -->
+<!-- hightlight part number ชื่อเดียวกันเป็นสีเดียวกัน excelหลังบ้าน -->
+<!-- columnกับrowชื่อไม่ตรงกันให้error -->
+
+
+
+```
+cd .\frontend\
+npm run serve
+```
+
+
+```
+cd .\backend\
+env\Scripts\activate
+uvicorn main:app --reload
+```

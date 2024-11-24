@@ -9,7 +9,7 @@ from fastapi.responses import FileResponse , StreamingResponse, JSONResponse
 from io import BytesIO
 import pandas as pd
 
-
+import datetime
 
 # Excel
 import pandas as pd
@@ -195,6 +195,8 @@ async def export_to_excel(data: list):
     df.to_excel(excel_file, index=False)
     excel_file.seek(0)
 
+    
+
     return Response(
         content=excel_file.getvalue(),
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -253,6 +255,8 @@ def get_table(session: Session = Depends(get_session)):
 
     output.seek(0)
 
+    
+
     return StreamingResponse(
         output,
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -268,6 +272,8 @@ def get_table(session: Session = Depends(get_session)):
 #         # 1             TG2         3.5     Null    8.0
 #         # 2             TG3         22.0    12.0    Null
 #         # 3             ss          1.0     2.0     3.0
+
+            # [{TG1 , "#ddd"}]
 
 #         #! data
 #         # data [
