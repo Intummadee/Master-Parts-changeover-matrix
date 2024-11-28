@@ -355,9 +355,10 @@ import {
     TooltipComponent,
     LegendComponent
 } from "echarts/components";
+// สำหรับเพิ่มหัวข้อ, Tooltip, และคำอธิบาย (Legend) ให้กับกราฟ
 
 import VChart, { THEME_KEY } from "vue-echarts";
-
+// ฟังก์ชัน use ใช้ลงทะเบียนโมดูลของ ECharts ที่ต้องการใช้งาน
 use([
     CanvasRenderer,
     PieChart,
@@ -369,84 +370,85 @@ use([
     export default {
     name: 'DashboardHome',
     data: () => ({
-    toggle_exclusive: 1,
+        toggle_exclusive: 1,
+
         orders: [
             {
-            id: 'P42',
-            title: 'Onboarding',
-            state: 'Delivered',
-            count: 3,
-            icon: 'fas fa-ellipsis-h'
+                id: 'P42',
+                title: 'Onboarding',
+                state: 'Delivered',
+                count: 3,
+                icon: 'fas fa-ellipsis-h'
             },
             {
-            id: 'P32',
-            title: 'User profile',
-            state: 'Delivered',
-            count: 8,
-            icon: 'fas fa-ellipsis-h'
+                id: 'P32',
+                title: 'User profile',
+                state: 'Delivered',
+                count: 8,
+                icon: 'fas fa-ellipsis-h'
             },
             {
-            id: 'P56',
-            title: 'Landing page',
-            state: 'Approved',
-            count: 12,
-            icon: 'fas fa-ellipsis-h'
+                id: 'P56',
+                title: 'Landing page',
+                state: 'Approved',
+                count: 12,
+                icon: 'fas fa-ellipsis-h'
             },
             {
-            id: 'P36',
-            title: 'Settings',
-            state: 'Approved',
-            count: 9,
-            icon: 'fas fa-ellipsis-h'
+                id: 'P36',
+                title: 'Settings',
+                state: 'Approved',
+                count: 9,
+                icon: 'fas fa-ellipsis-h'
             },
             
         ],
         
-option: {
-        title: {
-            text: "Burnsown chart",
-            left: "left"
-        },
-        tooltip: {
-            trigger: "item",
-            formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
+        option: {
+            title: {
+                text: "Burnsown chart",
+                left: "left"
+            },
+            tooltip: {
+                trigger: "item",
+                formatter: "{a} <br/>{b} : {c} ({d}%)"
+            },
         
-        series: [
-            {
-            name: "Traffic Sources",
-            type: "pie",
-            radius: "55%",
-            center: ["45%", "50%"],
-            data: [
-                { value: 335, name: "Direct" },
-                { value: 310, name: "Email" },
-                { value: 234, name: "Ad Networks" },
-                { value: 135, name: "Video Ads" },
-                { value: 1548, name: "Search Engines" }
-            ],
-            emphasis: {
-                itemStyle: {
-                shadowBlur: 10,
-                shadowOffsetX: 0,
-                shadowColor: "rgba(0, 0, 0, 0)"
-                }
-            }
-            }
-        ]
-}
+            series: [
+                {
+                    name: "Traffic Sources",
+                    type: "pie",
+                    radius: "55%",
+                    center: ["45%", "50%"],
+                    data: [
+                        { value: 335, name: "Direct" },
+                        { value: 310, name: "Email" },
+                        { value: 234, name: "Ad Networks" },
+                        { value: 135, name: "Video Ads" },
+                        { value: 1548, name: "Search Engines" }
+                    ],
+                    emphasis: {
+                        itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: "rgba(0, 0, 0, 0)"
+                        }
+                    }
+                }]
+        }
 
     }),
     components: {
         SideBar,
         SideBarRight,
-    VChart
-        
+        VChart
     },
+
     provide: {
-    [THEME_KEY]: "green"
-    },  
-    }
+        [THEME_KEY]: "green"
+    }, 
+    // การกำหนด Theme ให้กับ Vue-ECharts โดยตั้งค่าเป็น green
+}
 </script>
 
 
