@@ -23,6 +23,7 @@
             
               <v-list-item v-for="(item, i) in items" :key="i" active-class="border" class=""
               :ripple="false"
+              @click="goToPage(item)"
               >
               <!-- active-class="border" กำหนด CSS class ที่จะถูกเพิ่มเข้ามาเมื่อรายการใน <v-list-item> ถูกกำหนดให้ "active" (เช่น เมื่อผู้ใช้คลิกหรือเลือก) -->
                   <v-list-item-icon >    
@@ -68,6 +69,17 @@ export default {
         ],
     };
    },
+   methods: {
+    goToPage(item) {
+      if (item.icon === "fab fa-gitter") {
+        // เมื่อคลิกไอคอน 'fab fa-gitter' ให้ไปหน้า About
+        this.$router.push("/AboutPage");
+      } else {
+        // ทำการนำทางไปหน้าที่กำหนดไว้ใน item หรือไม่ก็ไม่มีการทำอะไร
+        console.log("Clicked:", item.icon);
+      }
+    },
+   }
 }
 </script>
 <style>

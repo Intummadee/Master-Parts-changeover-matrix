@@ -3,7 +3,7 @@
 <template>
   <v-app>
   <v-main>
-    <DashboardHome />
+    <router-view></router-view>
   </v-main>
     <!-- app ระบุว่า <v-app-bar> นี้จะอยู่ในบริบทของ v-app ซึ่งเป็นโครงสร้างหลักของแอปพลิเคชัน -->
     <!-- dark ทำให้ข้อความและไอคอนในแถบใช้โหมดสีเข้ม (เหมาะกับพื้นหลังสีสว่าง) -->
@@ -24,7 +24,7 @@
 // import UploadTable from './components/UploadTable.vue';
 // import chileSlot from './components/chileSlot.vue';
 
-import DashboardHome from './components/DashboardHome.vue';
+// import DashboardHome from './components/DashboardHome.vue';
 import { ref } from 'vue';
 
 const theme = ref('light')
@@ -33,7 +33,7 @@ export default {
   components: {
     // SideBar,
     // SideBarRight,
-    DashboardHome,
+    // DashboardHome,
     // DownloadTable,
     // UploadTable
   },

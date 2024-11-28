@@ -1,7 +1,7 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Home from "../App.vue";
-import AboutPage from "@/components/AboutPage.vue";
+import AboutPage from "../components/AboutPage.vue";
+import DashboardHome from "@/components/DashboardHome";
 
 Vue.use(Router);
 
@@ -10,11 +10,11 @@ export default new Router({
   routes: [
     {
       path: "/",
-      name: "Home",
-      component: Home, // แสดงคอมโพเนนต์ Home เมื่ออยู่ที่เส้นทาง "/"
+      name: "DashboardHome",
+      component: DashboardHome, //  จะโหลดคอมโพเนนต์นี้เมื่อไปที่หน้า Home
     },
     {
-      path: "/about",
+      path: "/AboutPage",
       name: "AboutPage",
       component: AboutPage, // แสดงคอมโพเนนต์ About เมื่ออยู่ที่เส้นทาง "/about"
     },
