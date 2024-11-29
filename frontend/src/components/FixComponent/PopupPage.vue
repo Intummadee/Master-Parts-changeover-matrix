@@ -65,11 +65,11 @@
         
       }),
       methods: {
-           formatDate (date) {
+          formatDate (date) {
           if (!date) return null
-  
           const [year, month, day] = date.split('-')
           return `${year}/${month}/${day}`
+          
         },
         parseDate (date) {
           if (!date) return null

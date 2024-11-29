@@ -3,7 +3,10 @@
 
     <Navbar/>
 
-
+    
+      <DashBoardViews />
+      <Projects />
+      <Team />
 
     <Footer/>
 
@@ -16,11 +19,16 @@
 
 import Navbar from './FixComponent/NavbarPage.vue'
 import Footer from './FixComponent/FooterPage.vue'
-
+import DashBoardViews from './FixComponent/views/DashBoardViews.vue'
+import Projects from './FixComponent/views/ProjectsPage.vue'
+import Team from './FixComponent/views/TeamPage.vue'
   export default {
     components: {
       Navbar,
-      Footer
+      Footer,
+      DashBoardViews,
+      Projects,
+      Team
     },
     name: "AboutPage",
     
