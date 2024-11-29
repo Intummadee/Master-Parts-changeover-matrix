@@ -7,6 +7,9 @@ import DashBoardViews from '../components/FixComponent/views/DashBoardViews.vue'
 import Projects from '../components/FixComponent/views/ProjectsPage.vue'
 import Team from '../components/FixComponent/views/TeamPage.vue'
 
+
+import HomeMain from '../components/HomeMain.vue'
+
 Vue.use(Router);
 
 export default new Router({
@@ -14,6 +17,11 @@ export default new Router({
   routes: [
     {
       path: "/",
+      name: "HomeMain",
+      component: HomeMain,
+    },
+    {
+      path: "/DashboardHome",
       name: "DashboardHome",
       component: DashboardHome, //  จะโหลดคอมโพเนนต์นี้เมื่อไปที่หน้า Home
     },

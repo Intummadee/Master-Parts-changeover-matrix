@@ -15,8 +15,8 @@
 
 
   export default {
-    props: ['tableData'],
     name: "DownloadTable",
+    props: ['tableData'],
     methods: {
         downloadTable(){
             console.log("Hi");
