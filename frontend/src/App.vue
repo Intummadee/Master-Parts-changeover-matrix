@@ -2,13 +2,16 @@
 
 <template>
   <v-app>
-  <v-main>
-    <router-view></router-view>
-  </v-main>
-    <!-- app ระบุว่า <v-app-bar> นี้จะอยู่ในบริบทของ v-app ซึ่งเป็นโครงสร้างหลักของแอปพลิเคชัน -->
-    <!-- dark ทำให้ข้อความและไอคอนในแถบใช้โหมดสีเข้ม (เหมาะกับพื้นหลังสีสว่าง) -->
-     <!-- ถ้าเป็น light นางคาดหวังว่าตัว text จะเป็นสีดำ กรณี dark คือเป็นสีขาว มันคือการปรับธีม -->
+
     
+    <v-main>
+      <router-view></router-view>
+    </v-main>
+      <!-- app ระบุว่า <v-app-bar> นี้จะอยู่ในบริบทของ v-app ซึ่งเป็นโครงสร้างหลักของแอปพลิเคชัน -->
+      <!-- dark ทำให้ข้อความและไอคอนในแถบใช้โหมดสีเข้ม (เหมาะกับพื้นหลังสีสว่าง) -->
+      <!-- ถ้าเป็น light นางคาดหวังว่าตัว text จะเป็นสีดำ กรณี dark คือเป็นสีขาว มันคือการปรับธีม -->
+
+
       
       
       
@@ -23,7 +26,8 @@
 // import DownloadTable from './components/DownloadTable.vue';
 // import UploadTable from './components/UploadTable.vue';
 // import chileSlot from './components/chileSlot.vue';
-
+// import Navbar from './components/FixComponent/NavbarPage.vue'
+// import Footer from './components/FixComponent/FooterPage.vue'
 // import DashboardHome from './components/DashboardHome.vue';
 import { ref } from 'vue';
 
@@ -36,6 +40,8 @@ export default {
     // DashboardHome,
     // DownloadTable,
     // UploadTable
+    // Navbar,
+    // Footer
   },
   data() {
     return {

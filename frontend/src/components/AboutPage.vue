@@ -1,13 +1,30 @@
 <template>
-    <div>
-      <h1>About Page</h1>
-      <p>นี่คือหน้าข้อมูลเกี่ยวกับเรา</p>
-    </div>
+    <v-app>
+
+    <Navbar/>
+
+
+
+    <Footer/>
+
+
+    </v-app>
   </template>
   
   <script>
+
+
+import Navbar from './FixComponent/NavbarPage.vue'
+import Footer from './FixComponent/FooterPage.vue'
+
   export default {
+    components: {
+      Navbar,
+      Footer
+    },
     name: "AboutPage",
+    
+
   };
   </script>
   
