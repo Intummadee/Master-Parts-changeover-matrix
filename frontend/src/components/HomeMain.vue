@@ -5,22 +5,22 @@
       
         <v-container style="margin-top:2rem">
             <v-data-table 
-            :headers="headers"
-            :items="tableData"
-            :item-key="'id'"
-            class="grey-table"
-            dense
+              :headers="headers"
+              :items="tableData"
+              :item-key="'id'"
+              class="grey-table"
+              dense
             >
             <template v-slot:item="{ item }">
                 <tr>
-                <td>{{ item.part_name }}</td>
-                <td v-for="(header, headerIndex) in headers.slice(1)" 
-                    :key="headerIndex"
-                    :class="{ 
-                        'grey-background': item.part_name === header.text
-                    }">
-                    {{ item.changeoverTimes[header.text] || '' }}
-                </td>
+                  <td>{{ item.part_name }}</td>
+                  <td v-for="(header, headerIndex) in headers.slice(1)" 
+                      :key="headerIndex"
+                      :class="{ 
+                          'grey-background': item.part_name === header.text
+                      }">
+                      {{ item.changeoverTimes[header.text] || '' }}
+                  </td>
                 </tr>
             </template>
             </v-data-table>

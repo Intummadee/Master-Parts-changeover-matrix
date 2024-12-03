@@ -37,12 +37,17 @@
     async downloadExcel() {
   try {
     const response = await axios.get('http://localhost:8000/table', {
-      responseType: 'blob',
+      responseType: 'blob', // ระบุว่าเป็นการดาวน์โหลดไฟล์
+      // ตั้งค่า responseType: 'blob' เพื่อรองรับไฟล์ binary
     });
 
-    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const url = window.URL.createObjectURL(blob);
+    // สร้าง URL ชั่วคราว (window.URL.createObjectURL) สำหรับไฟล์ที่ดึงมา
     const link = document.createElement('a');
     link.href = url;
+    link.target="_self"
+    // สร้างลิงก์ <a> ชั่วคราวเพื่อใช้ดาวน์โหลดไฟล์
     
     // let date = new Date(year,month,day)
     const date1 = new Date();
@@ -57,9 +62,10 @@
     link.setAttribute('download', name_excel);
     
 
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    document.body.appendChild(link); // ใส่ลิงก์ลงใน DOM ชั่วคราว
+    link.click(); // คลิกเพื่อดาวน์โหลด
+    document.body.removeChild(link); // ลบลิงก์ออกจาก DOM
+    window.URL.revokeObjectURL(url); // ลบ URL blob หลังใช้งาน
   } catch (error) {
     console.error('Error downloading Excel file:', error);
   }

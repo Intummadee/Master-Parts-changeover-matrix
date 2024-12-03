@@ -9,6 +9,7 @@ from fastapi.responses import FileResponse , StreamingResponse, JSONResponse
 from io import BytesIO
 import pandas as pd
 
+
 import datetime
 
 # Excel
@@ -253,14 +254,16 @@ def get_table(session: Session = Depends(get_session)):
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
         df.to_excel(writer, index=False, sheet_name='Parts Table')
 
-    output.seek(0)
+    output.seek(0) # ตั้ง pointer ไปที่จุดเริ่มต้นของไฟล์ในหน่วยความจำ
 
     
 
     return StreamingResponse(
+        # StreamingResponse: ใช้สำหรับส่งข้อมูลจากหน่วยความจำ เช่น BytesIO แทนการใช้ไฟล์ที่อยู่ในระบบ
+
         output,
-        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        headers={"Content-Disposition": "attachment; filename=parts_table.xlsx"}
+        media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        headers={'Content-Disposition': 'attachment; filename=parts_table.xlsx'}
         # Content-Disposition เป็น header ที่ระบุว่าไฟล์ที่ส่งกลับควรถูกดาวน์โหลดเป็นไฟล์ชื่อ parts_table.xlsx
     )
 
