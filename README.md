@@ -1,6 +1,6 @@
 # Master Parts changeover matrix
 
-- vuetify   
+- vuetify.
 
 
 <img width="100%" height="60%" src="https://github.com/Intummadee/Master-Parts-changeover-matrix/blob/main/assets/image_web.png">
