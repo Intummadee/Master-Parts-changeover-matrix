@@ -9,6 +9,21 @@ from fastapi.responses import FileResponse , StreamingResponse, JSONResponse
 from io import BytesIO
 import pandas as pd
 
+from openpyxl.styles import PatternFill
+
+import random
+
+# BytesIO ใช้สำหรับจัดการข้อมูลในหน่วยความจำแทนการสร้างไฟล์จริง
+# FastAPI และ Depends: ใช้สำหรับสร้าง API และจัดการ dependency injection
+# StreamingResponse: ใช้ส่งข้อมูลที่สร้างขึ้น (เช่น ไฟล์ Excel) กลับไปยังผู้ใช้
+# pandas: ใช้สำหรับสร้าง DataFrame และจัดการข้อมูลในรูปแบบตาราง
+# Session: ใช้จัดการการเชื่อมต่อฐานข้อมูล SQLAlchemy
+# PatternFill: มาจาก openpyxl ใช้สำหรับเติมสีพื้นหลังในเซลล์ Excel
+
+def random_color():
+    return ''.join(random.choices('0123456789ABCDEF', k=6))
+    # ชุดตัวอักษรนี้ประกอบด้วยตัวเลข (0–9) และตัวอักษร A–F ซึ่งเป็นชุดตัวอักษรที่ใช้ในรหัสสีแบบ HEX
+    # k=6: ระบุจำนวนครั้งที่ต้องสุ่ม คือ 6 ครั้ง (6 ตัวอักษร) ซึ่ง รหัสสี HEX จะมีความยาว 6 ตัวอักษร เช่น #FF5733
 
 import datetime
 
@@ -210,6 +225,7 @@ async def export_to_excel(data: list):
 
 # ปุ่มสร้าง excel จากฐานข้อมูล 
 @app.get("/table", response_model=List)
+# รับพารามิเตอร์ session เพื่อเข้าถึงฐานข้อมูลโดยใช้ SQLAlchemy
 def get_table(session: Session = Depends(get_session)):
     parts = session.query(Parts).all()
     changeovers = session.query(Changeover).all()
@@ -220,8 +236,9 @@ def get_table(session: Session = Depends(get_session)):
         changeover_times = {} # จะมีการสร้าง dictionary สำหรับ changeover_times
 
         for changeover in changeovers:
-            if changeover.from_part_id == part.id:
-                to_part = next((p for p in parts if p.id == changeover.to_part_id), None) # ใช้ next() เพื่อหาชื่อ part_name จาก parts ที่มี id ตรงกับ to_part_id
+            if changeover.from_part_id == part.id: # ใช้ from_part_id และ to_part_id เพื่อจับคู่ชิ้นส่วน
+                to_part = next((p for p in parts if p.id == changeover.to_part_id), None) 
+                # เป็นการค้นหา ชิ้นส่วน (part) ในลิสต์ parts ที่มี id ตรงกับ to_part_id ของ changeover
                 if to_part:
                     changeover_times[to_part.part_name] = changeover.changeover_time
 
@@ -242,17 +259,55 @@ def get_table(session: Session = Depends(get_session)):
     ])
 
     # คอลัมม
-    # ในขั้นตอนนี้ คอลัมน์ที่ชื่อขึ้นต้นด้วย TG จะถูกจัดเรียงตามลำดับตัวเลขที่ตามหลัง TG (เช่น TG1, TG2, TG3 ฯลฯ) โดยใช้ฟังก์ชัน sorted() พร้อม key=lambda x: int(x[2:]) เพื่อแยกเอาหมายเลขที่ตามหลัง TG และทำการจัดเรียงตามลำดับ
+    # ในขั้นตอนนี้ คอลัมน์ที่ชื่อขึ้นต้นด้วย TG จะถูกจัดเรียงตามลำดับตัวเลขที่ตามหลัง TG (เช่น TG1, TG2, TG3 ฯลฯ) 
     tg_columns = sorted([col for col in df.columns if col.startswith("TG")], key=lambda x: int(x[2:]))
-    ordered_columns = ["Part Name"] + tg_columns
-    df = df.loc[:, ordered_columns] # ให้ "Part Name" อยู่เป็นคอลัมน์แรก ตามด้วยคอลัมน์ที่ชื่อว่า "TG..."
+    # key: ใช้เพื่อระบุว่าค่าหลักใดจะนำมาใช้เป็นเกณฑ์ในการเรียงลำดับ
+    # lambda x: int(x[2:]): เป็นฟังก์ชันแบบย่อ (anonymous function) ที่รับค่าหนึ่ง (x) และคืนค่าที่ต้องการใช้ในการเปรียบเทียบ
+    # x[2:]: ตัดอักขระสองตัวแรกของสตริง x ออก (เริ่มนับจาก index 2)
+    # int(): แปลงส่วนที่เหลือให้เป็นตัวเลข (ชนิด int)
+    ordered_columns = ["Part Name"] + tg_columns # จัดลำดับใหม่ โดยให้ "Part Name" อยู่คอลัมน์แรก ตามด้วยคอลัมน์ "TG..."
+    df = df.loc[:, ordered_columns] # ปรับ DataFrame ให้ใช้ลำดับคอลัมน์ตามที่กำหนด
 
+    print("--------------------------------------------")
     print(df)
 
     # ใช้ Pandas ExcelWriter และ openpyxl engine เพื่อสร้างไฟล์ Excel จาก DataFrame
     output = BytesIO()
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
+    # ExcelWriter: ใช้เขียน DataFrame ลงในไฟล์ Excel
         df.to_excel(writer, index=False, sheet_name='Parts Table')
+
+        # โหลด workbook เพื่อแก้ไขไฟล์ Excel
+        workbook = writer.book
+        worksheet = writer.sheets['Parts Table'] # writer.sheets['Parts Table'] ดึง worksheet ชื่อ "Parts Table"
+
+        column_colors = {}
+        
+
+
+        # PatternFill กำหนดสีพื้นหลัง (ในตัวอย่างคือสีเหลือง FFFF00)
+        for col in tg_columns:
+
+            # สุ่มสีสำหรับแต่ละคอลัมน์
+            random_hex = random_color()
+            highlight_fill = PatternFill(start_color=random_hex, end_color=random_hex, fill_type="solid")
+
+            # เก็บสีในพจนานุกรม
+            column_colors[col] = random_hex
+
+            col_idx = df.columns.get_loc(col) + 1 # ต้องเพิ่ม 1 เพราะ Excel ใช้ index เริ่มต้นที่ 1
+            # for row_idx in range(2, len(df) + 2): # เริ่มที่ 2 เพื่อข้าม header
+            worksheet.cell(row=1, column=col_idx).fill = highlight_fill
+
+            for row_idx in range(2, len(df) + 2):  # เริ่มที่แถว 2
+                cell_value = worksheet.cell(row=row_idx, column=1).value  # ดึงค่าจากคอลัมน์ "Part Name"
+                if cell_value == col:  # ถ้าชื่อแถว (ในคอลัมน์ "Part Name") ตรงกับชื่อคอลัมน์
+                    worksheet.cell(row=row_idx, column=1).fill = highlight_fill
+                    worksheet.cell(row=row_idx, column=col_idx).fill = PatternFill(start_color="BEBEBE", end_color="BEBEBE", fill_type="solid")
+
+        
+         
+
 
     output.seek(0) # ตั้ง pointer ไปที่จุดเริ่มต้นของไฟล์ในหน่วยความจำ
 
