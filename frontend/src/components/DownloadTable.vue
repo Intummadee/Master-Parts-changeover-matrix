@@ -35,41 +35,42 @@
     },
 
     async downloadExcel() {
-  try {
-    const response = await axios.get('http://localhost:8000/table', {
-      responseType: 'blob', // ระบุว่าเป็นการดาวน์โหลดไฟล์
-      // ตั้งค่า responseType: 'blob' เพื่อรองรับไฟล์ binary
-    });
+      try {
+        const response = await axios.get('http://localhost:8000/table', {
+          responseType: 'blob', // ระบุว่าเป็นการดาวน์โหลดไฟล์
+          // ตั้งค่า responseType: 'blob' เพื่อรองรับไฟล์ binary
+        });
 
-    const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const url = window.URL.createObjectURL(blob);
-    // สร้าง URL ชั่วคราว (window.URL.createObjectURL) สำหรับไฟล์ที่ดึงมา
-    const link = document.createElement('a');
-    link.href = url;
-    link.target="_self"
-    // สร้างลิงก์ <a> ชั่วคราวเพื่อใช้ดาวน์โหลดไฟล์
-    
-    // let date = new Date(year,month,day)
-    const date1 = new Date();
-    const day = date1.getDate().toString().padStart(2, '0'); // เติมเลข 0 ข้างหน้า (ถ้าวันน้อยกว่า 10)
-    const month = (date1.getMonth() + 1).toString().padStart(2, '0'); // เติมเลข 0 และเดือนเริ่มจาก 0
-    const year = date1.getFullYear().toString();
+        const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const url = window.URL.createObjectURL(blob);
+        // สร้าง URL ชั่วคราว (window.URL.createObjectURL) สำหรับไฟล์ที่ดึงมา
+        const link = document.createElement('a');
+        link.href = url;
+        link.target="_self"
+        // สร้างลิงก์ <a> ชั่วคราวเพื่อใช้ดาวน์โหลดไฟล์
+        
+        // let date = new Date(year,month,day)
+        const date1 = new Date();
+        const day = date1.getDate().toString().padStart(2, '0'); // เติมเลข 0 ข้างหน้า (ถ้าวันน้อยกว่า 10)
+        const month = (date1.getMonth() + 1).toString().padStart(2, '0'); // เติมเลข 0 และเดือนเริ่มจาก 0
+        const year = date1.getFullYear().toString();
 
-    // รวมค่าที่ต้องการในรูปแบบ 'DD-MM-YYYY'
-    const excelName = `${day}-${month}-${year}`;
+        // รวมค่าที่ต้องการในรูปแบบ 'DD-MM-YYYY'
+        const excelName = `${day}-${month}-${year}`;
 
-    let name_excel = excelName + ".xlsx"
-    link.setAttribute('download', name_excel);
-    
+        let name_excel = excelName + ".xlsx"
+        link.setAttribute('download', name_excel);
+        
 
-    document.body.appendChild(link); // ใส่ลิงก์ลงใน DOM ชั่วคราว
-    link.click(); // คลิกเพื่อดาวน์โหลด
-    document.body.removeChild(link); // ลบลิงก์ออกจาก DOM
-    window.URL.revokeObjectURL(url); // ลบ URL blob หลังใช้งาน
-  } catch (error) {
-    console.error('Error downloading Excel file:', error);
-  }
-}
+        document.body.appendChild(link); // ใส่ลิงก์ลงใน DOM ชั่วคราว
+        link.click(); // คลิกเพื่อดาวน์โหลด
+        document.body.removeChild(link); // ลบลิงก์ออกจาก DOM
+        window.URL.revokeObjectURL(url); // ลบ URL blob หลังใช้งาน
+      } 
+      catch (error) {
+        console.error('Error downloading Excel file:', error);
+      }
+    }
 
 
 }

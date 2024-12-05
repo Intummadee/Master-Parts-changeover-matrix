@@ -291,7 +291,7 @@ def get_table(session: Session = Depends(get_session)):
             # สุ่มสีสำหรับแต่ละคอลัมน์
             random_hex = random_color()
             highlight_fill = PatternFill(start_color=random_hex, end_color=random_hex, fill_type="solid")
-
+            # print("highlight_fill ,  ", highlight_fill ) highlight_fill ,   <openpyxl.styles.fills.PatternFill object>
             # เก็บสีในพจนานุกรม
             column_colors[col] = random_hex
 
@@ -320,6 +320,7 @@ def get_table(session: Session = Depends(get_session)):
         media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         headers={'Content-Disposition': 'attachment; filename=parts_table.xlsx'}
         # Content-Disposition เป็น header ที่ระบุว่าไฟล์ที่ส่งกลับควรถูกดาวน์โหลดเป็นไฟล์ชื่อ parts_table.xlsx
+        
     )
 
 
