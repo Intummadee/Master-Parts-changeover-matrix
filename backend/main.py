@@ -94,6 +94,10 @@ def get_session():
 def parts(session: Session = Depends(get_session)): 
     stmt = select(Parts)
     result = session.exec(stmt).all()
+
+
+
+
     return result
 
 
@@ -272,6 +276,28 @@ def get_table(session: Session = Depends(get_session)):
 
     print("--------------------------------------------")
     print(df)
+
+    # ดึงชื่อคอลัมน์และแถวแรก
+    column_names = list(df.columns)  # ชื่อคอลัมน์
+    row_names = df["Part Name"].tolist()  # ชื่อแถว (จากคอลัมน์ Part Name)
+
+    # print("column_names" , column_names) # column_names ['Part Name', 'TG1', 'TG2', 'TG3', 'TG4', 'TG5']
+    # print("row_names " , row_names) # row_names  ['TG1', 'TG2', 'TG3', 'TG4', 'TG5', 'ss']
+
+    #! ตรวจสอบว่าชื่อไม่ตรงกัน
+    # if set(column_names[1:]) != set(row_names):  # ลบ "Part Name" ออกจากการเปรียบเทียบ
+    #     # set คือ โครงสร้างข้อมูล ที่ใช้เก็บค่าที่ไม่ซ้ำกัน
+    #     error_message = {
+    #         "error": "Column and row names do not match!",
+    #         "columns": column_names[1:],
+    #         "rows": row_names,
+    #     }
+    #     # raise ValueError(
+    #     #     # raise ใน Python ใช้เพื่อโยน ข้อผิดพลาด (Exception) เมื่อเกิดเงื่อนไขที่ไม่ปกติ
+    #     #     # ValueError เป็นข้อผิดพลาดประเภทหนึ่งใน Python ซึ่งมักใช้เมื่อค่าของข้อมูลไม่ถูกต้องหรือไม่เหมาะสมกับการประมวลผล
+    #     #     f"Error: Column names {column_names[1:]} and row names {row_names} do not match!"
+    #     # )
+    #     raise HTTPException(status_code=400, detail=error_message)
 
     # ใช้ Pandas ExcelWriter และ openpyxl engine เพื่อสร้างไฟล์ Excel จาก DataFrame
     output = BytesIO()

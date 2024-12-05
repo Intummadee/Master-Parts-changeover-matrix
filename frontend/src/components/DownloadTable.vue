@@ -3,8 +3,29 @@
       <v-btn @click="downloadExcel" color="primary" dark>
         Download Parts Table (Excel)
       </v-btn>
+      
+      <br />
+      <br />
+      <!-- v-if="error" -->
+      <v-main 
+      >
+        <!-- <v-alert
+          color="#2A3B4D"
+          density="compact"
+          icon="mdi-firework"
+          dark
+        >
+          ชื่อ column กับ row ไม่ตรงกัน
+          <br />
+          <br />
+          <v-btn @click="downloadExcel"  color="warning">
+            ยืนยันการ Download
+          </v-btn>
+        </v-alert> -->
+        
+        
 
-    
+      </v-main>
 
     </v-container>
   </template>
@@ -17,6 +38,10 @@
   export default {
     name: "DownloadTable",
     props: ['tableData'],
+    data: () => ({
+      column_colors: {},
+      error: false,
+    }),
     methods: {
         downloadTable(){
             console.log("Hi");
@@ -104,8 +129,16 @@
 
         // ใช้ column_colors
         console.log('Column Colors:', column_colors);
+        this.column_colors = column_colors
       } catch (error) {
+        if (error.response) {
+          console.error('Error from backend:', error.response.data);
+          // แจ้งเตือนผู้ใช้ในหน้าเว็บ
+          alert(`Error: ${error.response.data.detail.error}`);
+          this.error = true;
+        } else {
         console.error('Error downloading Excel file:', error);
+        }
       }
     }
 

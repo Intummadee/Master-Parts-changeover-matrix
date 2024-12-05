@@ -30,8 +30,8 @@
       
   
         <!-- Excel Download -->
-        <DownloadTable :tableData="tableData" />
-    
+        <DownloadTable :tableData="tableData"  />
+        
         <!-- Upload -->
         <UploadTable />
 
