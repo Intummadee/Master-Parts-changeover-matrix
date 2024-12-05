@@ -11,6 +11,8 @@ import pandas as pd
 
 from openpyxl.styles import PatternFill
 
+import base64
+
 import random
 
 # BytesIO ใช้สำหรับจัดการข้อมูลในหน่วยความจำแทนการสร้างไฟล์จริง
@@ -313,15 +315,19 @@ def get_table(session: Session = Depends(get_session)):
 
     
 
-    return StreamingResponse(
-        # StreamingResponse: ใช้สำหรับส่งข้อมูลจากหน่วยความจำ เช่น BytesIO แทนการใช้ไฟล์ที่อยู่ในระบบ
+    # return StreamingResponse(
+    #     # StreamingResponse: ใช้สำหรับส่งข้อมูลจากหน่วยความจำ เช่น BytesIO แทนการใช้ไฟล์ที่อยู่ในระบบ
+    #     output,
+    #     media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    #     headers={'Content-Disposition': 'attachment; filename=parts_table.xlsx'}
+    #     # Content-Disposition เป็น header ที่ระบุว่าไฟล์ที่ส่งกลับควรถูกดาวน์โหลดเป็นไฟล์ชื่อ parts_table.xlsx
+    # )
 
-        output,
-        media_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        headers={'Content-Disposition': 'attachment; filename=parts_table.xlsx'}
-        # Content-Disposition เป็น header ที่ระบุว่าไฟล์ที่ส่งกลับควรถูกดาวน์โหลดเป็นไฟล์ชื่อ parts_table.xlsx
-        
-    )
+    # ส่งทั้งไฟล์ Excel และ column_colors
+    return JSONResponse({
+        "file": base64.b64encode(output.getvalue()).decode('utf-8'),  # เข้ารหัส base64
+        "column_colors": column_colors,
+    })
 
 
 
